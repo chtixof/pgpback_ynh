@@ -1,0 +1,31 @@
+{
+    "name": "PGPBack",
+    "id": "pgpback",
+    "description": {
+        "en": "Save and restore the PGP keys for Rainloop",
+        "fr": "Sauve et restaure les clés PGP pour Rainloop"
+    },
+    "license": "MIT",
+    "developer": {
+        "name": "chtixof"
+    },
+    "multi_instance": "false",
+    "arguments": {
+        "install" : [            {
+                "name": "domain",
+                "ask": {
+                    "en": "Choose a domain for PGPBack",
+                    "en": "Choisissez un domaine pour PGPBack"
+                },
+                "example": "domain.org"
+            },{
+                "name": "path",
+                "ask": {
+                    "en": "Choose a path for PGPBack",
+                    "en": "Choisissez un chemin pour PGPBack"
+                },
+                "example": "/pgpback",
+                "default": "/pgpback"
+            } ]
+    }
+}

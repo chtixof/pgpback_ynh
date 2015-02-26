@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<head>           
+  <meta charset="utf-8">           
+  <title>PGPBack   
+  </title>           
+<style>
+body {
+background: #41444f;
+color: #bbb;
+}
+a {
+color: #fff;
+text-decoration:none;
+}
+a:hover {
+color: #fff;
+text-decoration:underline;
+}
+</style>
+</head>   
+<body>
+<h1>PGPBack : OpenPGP keys backup for Rainloop</h1>
+PGPBack has been tested with Chrome. It enables the following:<br><br>
+<a id="arestorels"  href="javascript:void(0)">Set the local OpenPGP keys from the server</a><br/><br/>
+<a id="asavels"  href="javascript:void(0)">Backup the local OpenPGP keys onto the server</a><br/><br/>
+<a id="aclearls"  href="javascript:void(0)">Clear the local OpenPGP keys (for security reasons)</a><br/><br/> 
+<script src="lib/jquery-1.11.2.min.js"></script>
+<script>
+$(document).ready(function() {
+  $('#asavels').click(function() {
+    if (confirm('The local OpenPGP keys will be loaded onto the server')) {
+      $.ajax("fav.php", {
+        data : JSON.stringify([localStorage["openpgp-private-keys"],localStorage["openpgp-public-keys"]]),
+        contentType : 'application/json',
+        type : 'POST',
+        dataType: 'json',
+        success: function (data) {
+          parseddata=JSON.parse(data);
+          switch (parseddata.rc){
+          case -2:
+            alert("User not logged in Yunohost. Keys not saved.");        
+            break;
+          case -1:
+          case -3:
+            alert("No keys to save.");        
+            break;
+          case 0:
+            alert("Problem when writing the data. Keys not saved.");        
+            break;
+          default:
+            alert("Keys saved ("+parseddata.rc+" bytes)."); 
+          }
+        }
+      });
+    }
+  });
+  $('#aclearls').click(function() {
+    if (confirm('The local OpenPGP keys will be deleted')) {
+      delete localStorage["openpgp-private-keys"];
+      delete localStorage["openpgp-public-keys"];
+    }
+  });
+  $('#arestorels').click(function() {
+    if (confirm('The local OpenPGP keys will be replaced by those from the server')) {
+      $.ajax("fav.php", {
+        contentType : 'application/json',
+        type : 'POST',
+        dataType: 'json',   
+        success: function (data) {
+          parseddata=JSON.parse(data);
+          switch (parseddata.rc){
+          case -2:
+            alert("User not logged in Yunohost. Keys not set.");        
+            break;
+          case -3:
+            alert("No data found. Keys not set.");        
+            break;
+          default:
+            localStorage["openpgp-private-keys"]=parseddata.pk[0];
+            localStorage["openpgp-public-keys"]=parseddata.pk[1];
+            alert("Keys set from the server."); 
+          }
+        }
+      });
+    }
+  });
+})
+</script>     
+</body>
+</html>
